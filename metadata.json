@@ -1,0 +1,6 @@
+{
+  "name": "SaaS Vehicle Project Report Generator",
+  "description": "A professional SaaS application to generate comprehensive Chartered Accountant style project reports for vehicle loans, complete with 5-year financial projections, loan schedules, DSCR, and AI-powered narrative introductions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

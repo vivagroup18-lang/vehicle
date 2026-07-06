@@ -1,0 +1,283 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-serif: "Lora", Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
+/* Custom Scrollbar */
+.custom-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 4px;
+}
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+/* Document Preview & Typography Style */
+.doc-preview {
+  --doc-font-body: var(--font-serif);
+  --doc-font-heading: var(--font-sans);
+  --doc-color-primary: #0f172a;
+  --doc-color-heading: #0f172a;
+  --doc-color-text: #1e293b;
+  --doc-bg-header: #f1f5f9;
+  --doc-border-color: #cbd5e1;
+  --doc-border-style: solid;
+  --doc-border-width: 1px;
+  --doc-cover-border: double 4px #475569;
+  --doc-cover-decor: none;
+  
+  font-family: var(--doc-font-body) !important;
+  line-height: 1.6;
+  color: var(--doc-color-text) !important;
+}
+
+.doc-preview h1, 
+.doc-preview h2, 
+.doc-preview h3, 
+.doc-preview h4 {
+  font-family: var(--doc-font-heading) !important;
+  color: var(--doc-color-heading) !important;
+}
+
+/* Professional Audit-grade Financial Table Styles */
+.fin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.fin-table th {
+  background-color: var(--doc-bg-header) !important;
+  color: var(--doc-color-heading) !important;
+  font-weight: 700;
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border: var(--doc-border-width) var(--doc-border-style) var(--doc-border-color) !important;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  font-family: var(--doc-font-heading) !important;
+}
+
+.fin-table td {
+  padding: 0.45rem 0.75rem;
+  border: var(--doc-border-width) var(--doc-border-style) var(--doc-border-color) !important;
+  color: var(--doc-color-text) !important;
+  font-family: var(--doc-font-body) !important;
+}
+
+.fin-table tr:hover td {
+  background-color: rgba(241, 245, 249, 0.4);
+}
+
+.fin-table .num {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.fin-table .total-row td,
+.fin-table tr.total-row td {
+  font-weight: 700 !important;
+  background-color: var(--doc-bg-header) !important;
+  border-top: 1.5px solid var(--doc-border-color) !important;
+  border-bottom: 3px double var(--doc-border-color) !important;
+  color: var(--doc-color-heading) !important;
+}
+
+/* Narrative content styling */
+.narrative-content {
+  font-family: var(--doc-font-body) !important;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--doc-color-text) !important;
+  text-align: justify;
+}
+
+.narrative-content p {
+  margin-bottom: 1rem;
+}
+
+.narrative-content h1, 
+.narrative-content h2, 
+.narrative-content h3, 
+.narrative-content h4 {
+  font-family: var(--doc-font-heading) !important;
+  color: var(--doc-color-heading) !important;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.narrative-content h1 {
+  font-size: 1.25rem;
+  border-bottom: 1px solid var(--doc-border-color) !important;
+  padding-bottom: 0.25rem;
+}
+
+.narrative-content h2 {
+  font-size: 1.125rem;
+}
+
+.narrative-content h3 {
+  font-size: 1rem;
+  text-decoration: underline;
+}
+
+.narrative-content ul, 
+.narrative-content ol {
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.narrative-content ul {
+  list-style-type: disc;
+}
+
+.narrative-content ol {
+  list-style-type: decimal;
+}
+
+.narrative-content li {
+  margin-bottom: 0.25rem;
+}
+
+.narrative-content strong {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* Print Styles */
+@media print {
+  /* 1. Reset base html and body for clean white paper output */
+  html, body {
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* 2. Hide all non-essential UI/UX layers (aside, headers, navigation bars, modals) */
+  .no-print,
+  aside,
+  header,
+  nav,
+  button,
+  .print-controls,
+  .saas-badge,
+  .page-break-indicator,
+  .sticky-bottom-controls,
+  div[class*="sticky"],
+  button[class*="bg-blue-600"],
+  .billing-modal {
+    display: none !important;
+  }
+
+  /* 3. Strip all constraints, borders, and margins from app layout shells,
+     using :not() to shield the target report preview and its child nodes. */
+  #root,
+  #root div:not(#report-document-body):not(#report-document-body *),
+  #root section:not(#report-document-body):not(#report-document-body *),
+  #root main:not(#report-document-body):not(#report-document-body *) {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    position: static !important;
+    width: 100% !important;
+  }
+
+  /* 4. Target the specific report wrapper to behave as a clean, continuous print stream */
+  #report-document-body {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    position: static !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .doc-preview {
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: 11pt !important;
+  }
+
+  /* Preserve audit-grade table row integration (prevent mid-row splitting) */
+  .fin-table tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .fin-table {
+    page-break-inside: auto !important;
+  }
+
+  /* Prevent orphaned heading elements at the page bottom */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  /* Force responsive chart SVGs to render at a robust scale in print mode */
+  .recharts-responsive-container {
+    width: 100% !important;
+    height: 250px !important;
+    min-height: 250px !important;
+  }
+
+  .force-page-break {
+    page-break-before: always !important;
+    break-before: page !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Custom page sizing and standard professional margin offsets */
+  @page {
+    size: A4 portrait;
+    margin: 15mm 15mm 15mm 15mm;
+  }
+}
+
