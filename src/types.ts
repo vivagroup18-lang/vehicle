@@ -42,6 +42,7 @@ export interface VehicleProjectReport {
   revenueMode?: "fixed" | "route";
   fixedRateType?: "per_km" | "per_day" | "flat";
   routes?: VehicleRoute[];
+  subsidyTreatment?: "margin" | "investment";
 }
 
 export type SubscriptionPlan = "starter" | "pro" | "enterprise";

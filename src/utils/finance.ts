@@ -308,7 +308,11 @@ export function calculateProjections(report: VehicleProjectReport): FinancialPro
   const investments: number[] = [];
   const dscrs: number[] = [];
 
-  let curCap = report.baseCost + report.bodyBuilding + report.workingCapital - initialLoan - subsidy; // margin capital
+  const treatAsMargin = report.subsidyTreatment !== "investment";
+  let curCap = report.baseCost + report.bodyBuilding + report.workingCapital - initialLoan;
+  if (treatAsMargin) {
+    curCap -= subsidy;
+  }
   if (curCap < 0) curCap = 0;
 
   for (let y = 0; y < reportYears; y++) {

@@ -51,7 +51,10 @@ export default function ReportForm({ report, onChange, user, onUseAi, isGenerate
           businessType: report.businessType,
           vehicleName: report.vehicleName,
           baseCost: report.baseCost,
+          bodyBuilding: report.bodyBuilding,
+          workingCapital: report.workingCapital,
           loanAmount: report.loanAmount,
+          subsidy: report.subsidy,
           tenureYears: report.tenureYears,
         }),
       });
@@ -73,7 +76,8 @@ export default function ReportForm({ report, onChange, user, onUseAi, isGenerate
 
   // Helper: auto calculate margin
   const totalCost = report.baseCost + report.bodyBuilding + report.workingCapital;
-  const marginCapital = Math.max(0, totalCost - report.loanAmount - report.subsidy);
+  const isSubsidyAsMargin = report.subsidyTreatment !== "investment";
+  const marginCapital = Math.max(0, totalCost - report.loanAmount - (isSubsidyAsMargin ? report.subsidy : 0));
 
   const tabs = [
     { id: "profile", label: "Profile", icon: User },
@@ -284,13 +288,29 @@ export default function ReportForm({ report, onChange, user, onUseAi, isGenerate
               </div>
             </div>
 
+            {report.subsidy > 0 && (
+              <div className="bg-slate-50 border border-slate-250 p-2.5 rounded-lg text-xs space-y-1">
+                <label className="block text-[11px] font-bold text-slate-700">Subsidy Treatment</label>
+                <select
+                  value={report.subsidyTreatment || "margin"}
+                  onChange={(e) => onChange({ subsidyTreatment: e.target.value as "margin" | "investment" })}
+                  className="w-full border border-slate-200 rounded-lg p-2 text-xs outline-none focus:ring-1 focus:ring-blue-500 bg-white font-semibold text-slate-800"
+                >
+                  <option value="margin">As Promoter's Margin Contribution (Reduces own contribution)</option>
+                  <option value="investment">As Capital Investment/Reserve (Durable project liquidity)</option>
+                </select>
+              </div>
+            )}
+
             <div>
               <label className="block text-xs font-bold text-slate-600 mb-1">Required Margin Capital (Own Capital)</label>
               <div className="w-full bg-emerald-50/50 border border-emerald-200 text-emerald-800 rounded-lg p-2.5 text-xs font-extrabold flex justify-between items-center">
                 <span>Promoter Equity Contribution:</span>
                 <span>₹{marginCapital.toLocaleString("en-IN")}</span>
               </div>
-              <p className="text-[10px] text-slate-400 mt-1">Calculated as: Total Cost - Bank Loan - Govt Subsidy</p>
+              <p className="text-[10px] text-slate-400 mt-1">
+                Calculated as: {isSubsidyAsMargin ? "Total Cost - Bank Loan - Govt Subsidy" : "Total Cost - Bank Loan"}
+              </p>
             </div>
 
             <div className="grid grid-cols-3 gap-2 border-t border-slate-100 pt-3">

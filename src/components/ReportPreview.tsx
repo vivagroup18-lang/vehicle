@@ -41,7 +41,7 @@ interface ReportPreviewProps {
 }
 
 export default function ReportPreview({ report, triggerPrintCount }: ReportPreviewProps) {
-  const [showAmortization, setShowAmortization] = useState(false);
+  const [showAmortization, setShowAmortization] = useState(true);
   const [activePreviewSection, setActivePreviewSection] = useState<"all" | "narrative" | "financials">("all");
   const [showPrintModal, setShowPrintModal] = useState(false);
   const [isInIframe, setIsInIframe] = useState(false);
@@ -157,7 +157,9 @@ export default function ReportPreview({ report, triggerPrintCount }: ReportPrevi
 
   const reportYears = fyLabels.length;
   const totalCost = report.baseCost + report.bodyBuilding + report.workingCapital;
-  const promoterMargin = Math.max(0, totalCost - report.loanAmount - report.subsidy);
+  const isSubsidyAsMargin = report.subsidyTreatment !== "investment";
+  const promoterMargin = Math.max(0, totalCost - report.loanAmount - (isSubsidyAsMargin ? report.subsidy : 0));
+  const meansOfFinanceTotal = promoterMargin + report.subsidy + report.loanAmount;
 
   // Trigger browser print dialog (which uses index.css print queries for vector PDF)
   const handlePrint = () => {
@@ -260,7 +262,7 @@ export default function ReportPreview({ report, triggerPrintCount }: ReportPrevi
     if (coverPage) {
       const isClassic = docTemplate === "classic";
       const debtPct = totalCost > 0 ? Math.round((report.loanAmount / totalCost) * 100) : 0;
-      const equityPct = Math.max(0, 100 - debtPct);
+      const equityPct = totalCost > 0 ? Math.round((promoterMargin / totalCost) * 100) : 0;
       const displayBorder = styleValues.coverBorder !== "none" ? styleValues.coverBorder : "none";
 
       coverPage.outerHTML = `
@@ -718,7 +720,7 @@ export default function ReportPreview({ report, triggerPrintCount }: ReportPrevi
     csvContent += `Own Margin Capital,${promoterMargin}\n`;
     csvContent += `Government Subsidy,${report.subsidy}\n`;
     csvContent += `Bank Term Loan,${report.loanAmount}\n`;
-    csvContent += `TOTAL CAPITAL STRUCTURE,${totalCost}\n\n\n`;
+    csvContent += `TOTAL CAPITAL STRUCTURE,${meansOfFinanceTotal}\n\n\n`;
 
     // 2. Projected Profitability Table
     csvContent += "PROJECTED PROFITABILITY STATEMENT (5-YEARS)\n";
@@ -1074,7 +1076,7 @@ export default function ReportPreview({ report, triggerPrintCount }: ReportPrevi
                       </tr>
                       <tr className="total-row">
                         <td>TOTAL CAPITAL STRUCTURE (B)</td>
-                        <td className="num font-mono">₹{formatINR(totalCost)}</td>
+                        <td className="num font-mono">₹{formatINR(meansOfFinanceTotal)}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -1927,45 +1929,43 @@ export default function ReportPreview({ report, triggerPrintCount }: ReportPrevi
                   Amortization schedule (Page 8) is truncated for layout. Click "Expand" to view all monthly cycles in web-preview.
                 </div>
 
-                {(showAmortization || activePreviewSection === "financials") && (
-                  <div className="overflow-x-auto transition-all duration-300">
-                    <table className="fin-table text-[9px] md:text-xs">
-                      <thead>
-                        <tr>
-                          <th className="text-center">Mo.</th>
-                          <th className="text-center">Payment Date</th>
-                          <th className="text-center">FY</th>
-                          <th>Opening Bal (₹)</th>
-                          <th>Equated EMI (₹)</th>
-                          <th>Interest (₹)</th>
-                          <th>Principal Paid (₹)</th>
-                          <th>Closing Bal (₹)</th>
-                          <th className="text-center">Type</th>
+                <div className={`${showAmortization || activePreviewSection === "financials" ? "block" : "hidden print:block"} overflow-x-auto transition-all duration-300`}>
+                  <table className="fin-table text-[9px] md:text-xs">
+                    <thead>
+                      <tr>
+                        <th className="text-center">Mo.</th>
+                        <th className="text-center">Payment Date</th>
+                        <th className="text-center">FY</th>
+                        <th>Opening Bal (₹)</th>
+                        <th>Equated EMI (₹)</th>
+                        <th>Interest (₹)</th>
+                        <th>Principal Paid (₹)</th>
+                        <th>Closing Bal (₹)</th>
+                        <th className="text-center">Type</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {emiSchedule.map((row) => (
+                        <tr 
+                          key={row.month} 
+                          className={`hover:bg-slate-50 ${row.isMoratorium ? "bg-amber-50/50" : ""}`}
+                        >
+                          <td className="text-center font-mono">{row.month}</td>
+                          <td className="text-center font-mono">{row.dateStr}</td>
+                          <td className="text-center font-mono text-slate-500">{row.fy}</td>
+                          <td className="num font-mono">₹{formatINR(row.open)}</td>
+                          <td className="num font-mono">₹{formatINR(row.emi)}</td>
+                          <td className="num font-mono text-red-600">₹{formatINR(row.int)}</td>
+                          <td className="num font-mono text-green-700">₹{formatINR(row.prin)}</td>
+                          <td className="num font-mono font-semibold">₹{formatINR(row.close)}</td>
+                          <td className="text-center text-[10px] text-slate-500 italic">
+                            {row.isMoratorium ? "Moratorium" : "Amortized"}
+                          </td>
                         </tr>
-                      </thead>
-                      <tbody>
-                        {emiSchedule.map((row) => (
-                          <tr 
-                            key={row.month} 
-                            className={`hover:bg-slate-50 ${row.isMoratorium ? "bg-amber-50/50" : ""}`}
-                          >
-                            <td className="text-center font-mono">{row.month}</td>
-                            <td className="text-center font-mono">{row.dateStr}</td>
-                            <td className="text-center font-mono text-slate-500">{row.fy}</td>
-                            <td className="num font-mono">₹{formatINR(row.open)}</td>
-                            <td className="num font-mono">₹{formatINR(row.emi)}</td>
-                            <td className="num font-mono text-red-600">₹{formatINR(row.int)}</td>
-                            <td className="num font-mono text-green-700">₹{formatINR(row.prin)}</td>
-                            <td className="num font-mono font-semibold">₹{formatINR(row.close)}</td>
-                            <td className="text-center text-[10px] text-slate-500 italic">
-                              {row.isMoratorium ? "Moratorium" : "Amortized"}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
 
             </div>
